@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\PostRequest;
+use App\Http\Requests\SearchRequest;
 use App\Post;
 use App\Tag;
 use Illuminate\Http\Request;
@@ -12,12 +13,17 @@ class PostController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param SearchRequest $request
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(SearchRequest $request)
     {
+        $posts = Post::orderBy('id', 'desc')->with('tags');
+        if (request()->has('title')){
+            $posts = $posts->where('title', request('title'));
+        }
         return view('post.index', [
-            'posts' => Post::orderBy('id', 'desc')->with('tags')->paginate(10),
+            'posts' => $posts->paginate(10),
         ]);
     }
 
@@ -42,8 +48,7 @@ class PostController extends Controller
         $tag = new Tag;
         $newData = $request->only('title', 'content');
         if (request()->has('tags')) {
-            $tags = explode(',', request('tags'));
-            $tag->create($tags, Post::create($newData));
+            $tag->create(request('tags'), Post::create($newData));
         }
         return redirect('/');
     }
