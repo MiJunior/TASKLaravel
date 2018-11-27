@@ -27,7 +27,7 @@ class Tag extends Model
      * @param Post $post
      * @return Tag|string
      */
-    public function create(array $data, Post $post){
+    public function createWithRelations(array $data, Post $post){
         try{
             DB::transaction(function() use ($post, $data) {
                 foreach ($data as $value){

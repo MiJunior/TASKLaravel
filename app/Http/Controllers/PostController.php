@@ -48,7 +48,7 @@ class PostController extends Controller
         $tag = new Tag;
         $newData = $request->only('title', 'content');
         if (request()->has('tags')) {
-            $tag->create(request('tags'), Post::create($newData));
+            $tag->createWithRelations(request('tags'), Post::create($newData));
         }
         return redirect('/');
     }
